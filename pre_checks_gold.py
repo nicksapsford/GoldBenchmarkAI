@@ -26,8 +26,11 @@ NO_ENTRY_AFTER_MIN      = 20 * 60 + 30   # 20:30 UTC -- no new entries within 30
 
 RSI_LONG_NORMAL   = 52    # relaxed 55->52 (v1.0.6, backtest_gold validated)
 RSI_SHORT_NORMAL  = 48    # relaxed 45->48 (v1.0.6, backtest_gold validated)
-RSI_LONG_ASIAN    = 60    # tighter filter for thin Asian markets
-RSI_SHORT_ASIAN   = 40
+# Asian-session RSI tightening REMOVED 25 Jul 2026 (filter-audit tidy-up): the two live
+# Gold systems dropped it on 23 Jul, so the pure-Lancelot benchmark must match -- same
+# RSI bar in ALL sessions, no Asian special case. is_asian is still flagged for logging.
+RSI_LONG_ASIAN    = RSI_LONG_NORMAL
+RSI_SHORT_ASIAN   = RSI_SHORT_NORMAL
 
 CHOPPY_RSI_THRESHOLD    = 5.0
 CHOPPY_TMO_THRESHOLD    = 0.5
@@ -165,7 +168,7 @@ def check_liquidity_period(now_utc: Optional[datetime] = None) -> dict:
     result["liquidity_period"] = period
     result["is_asian"] = is_asian
     if is_asian:
-        log.info("  Asian session -- thin liquidity, requiring higher conviction (RSI 60/40).")
+        log.info("  Asian session -- flagged for logging only (no RSI tightening; benchmark parity 25 Jul).")
     return result
 
 
